@@ -9,7 +9,13 @@ class App extends React.Component {
         title: '',
         description: ''}
       }, 
-      searchYouTube: window.searchYouTube
+      stats: {
+        currentViewCount: 0,
+        currentLikeCount: 0, 
+        currentDislikeCount: 0,
+      },
+      searchYouTube: window.searchYouTube, 
+      searchVideo: window.searchVideo
     };
 
     this.onVideoClick = this.onVideoClick.bind(this);
@@ -19,10 +25,13 @@ class App extends React.Component {
   onVideoClick(current) {
     this.setState({
       currentVideo: current
-    }); 
+    });
+
+    this.getStats();
   }
 
   componentDidMount() {
+
     this.state.searchYouTube({
       key: window.YOUTUBE_API_KEY,
       query: '', 
@@ -35,20 +44,41 @@ class App extends React.Component {
           currentVideo: data[0]
         });
 
+        this.getStats();
+
       }.bind(this));
+
+
+
+    //Need to wait for first ajax call to finish
+  }
+
+  getStats() {
+
+    this.state.searchVideo(this.state.currentVideo.id.videoId, function(data) {
+      console.log('stats Data ', data);
+      this.setState({
+        stats: {
+          currentViewCount: data.items[0].statistics.viewCount,
+          currentLikeCount: data.items[0].statistics.likeCount, 
+          currentDislikeCount: data.items[0].statistics.dislikeCount 
+        }
+      });
+    }.bind(this));
   }
 
   reRenderOnSearch(options) {
 
     this.state.searchYouTube(options, 
       function(data) {
-        
         this.setState({
           videos: data,
           currentVideo: data[0]
         });
 
       }.bind(this));
+
+    this.getStats().bind(this);
   }
   
   render() {
@@ -59,7 +89,7 @@ class App extends React.Component {
           <VideoPlayer video={this.state.currentVideo}/>
         </div>
         <div className="col-md-7">
-          <VideoDetails videoID={this.state.currentVideo.id}/>
+          <VideoDetails stats={this.state.stats}/>
         </div>
         <div className="col-md-5">
           <VideoList setCurrentVideo={this.onVideoClick} videos={this.state.videos}/>
@@ -97,4 +127,20 @@ window.searchYouTube = (options, callback) => {
   });
 };
 
+window.searchVideo = function(videoId, callback) {
+  console.log('videoId: ', videoId);
+  $.ajax({
+    //data: {part: 'snippet', key: options.key, q: options.query, maxResults: options.max, videoEmbeddable: 'true', type: 'video'},
+    url: `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=AIzaSyD5jlVmZhs2qF7JNMLPa-KeKAOzzYMccO4`,
+    type: 'GET',
+    success: function(data) {
+      console.log('returnfromSearchVideo: ',data);
+      callback(data);
+    },
+    error: function(error) {
+      console.log("Error: ", error.responseText);
+    }
+  });
+
+};
 
