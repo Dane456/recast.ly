@@ -8,6 +8,7 @@ class App extends React.Component {
     };
 
     this.onVideoClick = this.onVideoClick.bind(this);
+    this.reRenderOnSearch = this.reRenderOnSearch.bind(this);
   }
 
   onVideoClick(current) {
@@ -15,11 +16,26 @@ class App extends React.Component {
       currentVideo: current
     }); 
   }
+
+  componentDidMount() {
+  
+  }
+
+  reRenderOnSearch(options) {
+
+    this.props.searchYouTube(options, 
+      function(data) {
+        //console.log('App Data: ' + data);
+        this.setState({
+          //videos: data;
+        });
+      }.bind(this));
+  }
   
   render() {
     return (
       <div>
-        <Nav />
+        <Nav searchYouTube={this.reRenderOnSearch} />
         <div className="col-md-7">
           <VideoPlayer video={this.state.currentVideo}/>
         </div>

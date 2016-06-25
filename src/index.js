@@ -5,4 +5,4 @@
 //  <h1>Hello World!</h1>
 // );
 
-ReactDOM.render(<App search={searchYouTube}/>, document.getElementById('app'));
+ReactDOM.render(<App search={window.searchYouTube}/>, document.getElementById('app'));
