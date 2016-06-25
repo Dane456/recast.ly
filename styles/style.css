@@ -4,6 +4,10 @@ body {
   background: #f1f1f1;
 }
 
+img {
+  cursor: pointer;
+}
+
 .navbar {
   background: #fff;
   margin-bottom: 20px;

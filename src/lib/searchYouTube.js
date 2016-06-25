@@ -1,4 +1,4 @@
-var searchYouTube = (options, callback) => {
+window.searchYouTube = (options, callback) => {
   // TODO
   // $.get('https://www.googleapis.com/youtube/v3/search', function(data) {
   //   console.log(data);
@@ -19,4 +19,3 @@ var searchYouTube = (options, callback) => {
   });
 };
 
-window.searchYouTube = searchYouTube;

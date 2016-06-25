@@ -1,4 +1,5 @@
 var Nav = (props) => {
+  console.log(props);
   
   return (
   <nav className="navbar">
